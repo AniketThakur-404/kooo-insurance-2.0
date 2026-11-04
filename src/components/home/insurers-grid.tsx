@@ -19,14 +19,14 @@ export function InsurersGrid() {
           {insurers.map((insurer) => (
             <div
               key={insurer.name}
-              className="group flex aspect-[3/2] items-center justify-center border-b border-r border-navy/15 p-6 transition-colors duration-500 hover:bg-white md:p-10"
+              className="group flex aspect-[3/2] items-center justify-center border-b border-r border-navy/15 p-6 transition-colors duration-500 hover:bg-white/70 md:p-10"
             >
               <Image
                 src={insurer.logo}
                 alt={`${insurer.name} logo`}
                 width={180}
                 height={90}
-                className="max-h-14 w-auto object-contain opacity-70 mix-blend-multiply grayscale transition duration-500 group-hover:opacity-100 group-hover:grayscale-0"
+                className="max-h-14 w-auto object-contain opacity-75 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
               />
             </div>
           ))}

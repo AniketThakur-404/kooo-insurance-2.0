@@ -1,12 +1,12 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { gsap, scrambleIn, useGSAP } from "@/lib/gsap";
 import { prefersReducedMotion, useUi } from "@/lib/ui-store";
 import { categories, home } from "@/content/site";
 import { RollText } from "@/components/motion/roll-text";
+import { HeroFilm } from "@/components/home/hero-film";
 
 /**
  * Reference hero: each word rises in its corner while decoding from dots,
@@ -74,7 +74,7 @@ export function Hero() {
           { clipPath: "inset(0% 0% 0% 0%)", duration: 1.15, ease: "power3.inOut", immediateRender: false },
           "open+=0.2",
         )
-        .fromTo("[data-hero-image] img", { scale: 1.3 }, { scale: 1, duration: 1.8, ease: "power3.out" }, "open+=0.2")
+        .fromTo("[data-film]", { scale: 1.3 }, { scale: 1, duration: 1.8, ease: "power3.out" }, "open+=0.2")
         .to("[data-hero-label]", { opacity: 1, y: 0, duration: 0.6, stagger: 0.07, ease: "power3.out" }, "-=0.6")
         .call(() => gsap.set(inners, { clearProps: "width" }));
     },
@@ -105,7 +105,8 @@ export function Hero() {
           data-hero-image
           className="relative my-[2svh] min-h-0 w-[min(78vw,26rem)] flex-1 overflow-hidden sm:w-[min(50vw,30rem)] md:w-[34vw] md:max-w-[38rem]"
         >
-          <Image src={home.hero.image} alt="" fill priority sizes="(min-width: 768px) 34vw, 78vw" className="object-cover" />
+          {/* Looping brand film: logo intro, then each service. Starts once the frame has opened. */}
+          <HeroFilm play={ready} delay={2.2} />
         </div>
         <div aria-hidden className="flex gap-[0.24em] font-heading text-[clamp(2.5rem,8.6vw,9.5rem)] leading-none text-navy">
           {word(2)}

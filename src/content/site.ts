@@ -270,21 +270,21 @@ export const home = {
 };
 
 export const insurers = [
-  { name: "NTI", logo: "/images/insurers/nti.svg" },
-  { name: "Chubb", logo: "/images/insurers/chubb.png" },
-  { name: "Agile Underwriting", logo: "/images/insurers/agile-underwriting.jpg" },
-  { name: "Keystone", logo: "/images/insurers/keystone.jpg" },
-  { name: "Nautilus Marine", logo: "/images/insurers/nautilus-marine.png" },
-  { name: "Woodina Underwriting Agency", logo: "/images/insurers/woodina.webp" },
-  { name: "DUAL", logo: "/images/insurers/dual.png" },
-  { name: "Vero", logo: "/images/insurers/vero.png" },
-  { name: "CGU", logo: "/images/insurers/cgu.png" },
-  { name: "QBE", logo: "/images/insurers/qbe.png" },
-  { name: "Hollard", logo: "/images/insurers/hollard.png" },
-  { name: "SURA", logo: "/images/insurers/sura.png" },
-  { name: "GT Insurance", logo: "/images/insurers/gt-insurance.png" },
-  { name: "Enthusiast", logo: "/images/insurers/enthusiast.png" },
-  { name: "CHU", logo: "/images/insurers/chu.jpg" },
+  { name: "NTI", logo: "/images/insurers/mono/nti.png" },
+  { name: "Chubb", logo: "/images/insurers/mono/chubb.png" },
+  { name: "Agile Underwriting", logo: "/images/insurers/mono/agile-underwriting.png" },
+  { name: "Keystone", logo: "/images/insurers/mono/keystone.png" },
+  { name: "Nautilus Marine", logo: "/images/insurers/mono/nautilus-marine.png" },
+  { name: "Woodina Underwriting Agency", logo: "/images/insurers/mono/woodina.png" },
+  { name: "DUAL", logo: "/images/insurers/mono/dual.png" },
+  { name: "Vero", logo: "/images/insurers/mono/vero.png" },
+  { name: "CGU", logo: "/images/insurers/mono/cgu.png" },
+  { name: "QBE", logo: "/images/insurers/mono/qbe.png" },
+  { name: "Hollard", logo: "/images/insurers/mono/hollard.png" },
+  { name: "SURA", logo: "/images/insurers/mono/sura.png" },
+  { name: "GT Insurance", logo: "/images/insurers/mono/gt-insurance.png" },
+  { name: "Enthusiast", logo: "/images/insurers/mono/enthusiast.png" },
+  { name: "CHU", logo: "/images/insurers/mono/chu.png" },
 ];
 
 export const about = {
