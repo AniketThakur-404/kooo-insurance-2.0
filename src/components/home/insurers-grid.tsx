@@ -26,7 +26,7 @@ export function InsurersGrid() {
                 alt={`${insurer.name} logo`}
                 width={180}
                 height={90}
-                className="max-h-14 w-auto object-contain opacity-75 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
+                className="max-h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
               />
             </div>
           ))}

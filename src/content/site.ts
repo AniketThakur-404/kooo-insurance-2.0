@@ -270,21 +270,21 @@ export const home = {
 };
 
 export const insurers = [
-  { name: "NTI", logo: "/images/insurers/mono/nti.png" },
-  { name: "Chubb", logo: "/images/insurers/mono/chubb.png" },
-  { name: "Agile Underwriting", logo: "/images/insurers/mono/agile-underwriting.png" },
-  { name: "Keystone", logo: "/images/insurers/mono/keystone.png" },
-  { name: "Nautilus Marine", logo: "/images/insurers/mono/nautilus-marine.png" },
-  { name: "Woodina Underwriting Agency", logo: "/images/insurers/mono/woodina.png" },
-  { name: "DUAL", logo: "/images/insurers/mono/dual.png" },
-  { name: "Vero", logo: "/images/insurers/mono/vero.png" },
-  { name: "CGU", logo: "/images/insurers/mono/cgu.png" },
-  { name: "QBE", logo: "/images/insurers/mono/qbe.png" },
-  { name: "Hollard", logo: "/images/insurers/mono/hollard.png" },
-  { name: "SURA", logo: "/images/insurers/mono/sura.png" },
-  { name: "GT Insurance", logo: "/images/insurers/mono/gt-insurance.png" },
-  { name: "Enthusiast", logo: "/images/insurers/mono/enthusiast.png" },
-  { name: "CHU", logo: "/images/insurers/mono/chu.png" },
+  { name: "NTI", logo: "/images/insurers/clean/nti.png" },
+  { name: "Chubb", logo: "/images/insurers/clean/chubb.png" },
+  { name: "Agile Underwriting", logo: "/images/insurers/clean/agile-underwriting.png" },
+  { name: "Keystone", logo: "/images/insurers/clean/keystone.png" },
+  { name: "Nautilus Marine", logo: "/images/insurers/clean/nautilus-marine.png" },
+  { name: "Woodina Underwriting Agency", logo: "/images/insurers/clean/woodina.png" },
+  { name: "DUAL", logo: "/images/insurers/clean/dual.png" },
+  { name: "Vero", logo: "/images/insurers/clean/vero.png" },
+  { name: "CGU", logo: "/images/insurers/clean/cgu.png" },
+  { name: "QBE", logo: "/images/insurers/clean/qbe.png" },
+  { name: "Hollard", logo: "/images/insurers/clean/hollard.png" },
+  { name: "SURA", logo: "/images/insurers/clean/sura.png" },
+  { name: "GT Insurance", logo: "/images/insurers/clean/gt-insurance.png" },
+  { name: "Enthusiast", logo: "/images/insurers/clean/enthusiast.png" },
+  { name: "CHU", logo: "/images/insurers/clean/chu.png" },
 ];
 
 export const about = {
