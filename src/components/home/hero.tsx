@@ -74,7 +74,8 @@ export function Hero() {
   );
 
   return (
-    <section ref={ref} className="sticky top-0 h-svh overflow-hidden bg-navy">
+    <section ref={ref} className="sticky top-0 aspect-video w-full overflow-hidden bg-navy md:aspect-auto md:h-svh">
+      {/* Phones: as tall as the video (16:9), not the full screen. From md up: full screen. */}
       <h1 className="sr-only">{words.join(" ")}</h1>
       <div data-hero-stage className="relative h-full will-change-transform">
         {/* Full-bleed looping video, muted so browsers allow autoplay. */}
@@ -94,7 +95,7 @@ export function Hero() {
 
         <div
           aria-hidden
-          className="absolute bottom-[12svh] left-5 font-heading text-[clamp(2rem,4.5vw,4.75rem)] leading-[1.05] text-white/85 md:bottom-[11svh] md:left-8"
+          className="absolute bottom-4 left-4 font-heading text-[clamp(1.4rem,4.5vw,4.75rem)] leading-[1.05] text-white/85 md:bottom-[11svh] md:left-8"
         >
           <div className="flex gap-[0.24em]">
             {word(0)}
