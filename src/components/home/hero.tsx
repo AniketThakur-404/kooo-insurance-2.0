@@ -6,7 +6,6 @@ import { gsap, scrambleIn, useGSAP } from "@/lib/gsap";
 import { prefersReducedMotion, useUi } from "@/lib/ui-store";
 import { categories, home } from "@/content/site";
 import { RollText } from "@/components/motion/roll-text";
-import { HeroFilm } from "@/components/home/hero-film";
 
 /**
  * Reference hero: each word rises in its corner while decoding from dots,
@@ -105,8 +104,18 @@ export function Hero() {
           data-hero-image
           className="relative my-[2svh] min-h-0 w-[min(78vw,26rem)] flex-1 overflow-hidden sm:w-[min(50vw,30rem)] md:w-[34vw] md:max-w-[38rem]"
         >
-          {/* Looping brand film: logo intro, then each service. Starts once the frame has opened. */}
-          <HeroFilm play={ready} delay={2.2} />
+          {/* Looping hero video, muted so browsers allow autoplay. */}
+          <video
+            data-film
+            className="absolute inset-0 h-full w-full object-cover"
+            src="/KOO_no_watermark.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden
+          />
         </div>
         <div aria-hidden className="flex gap-[0.24em] font-heading text-[clamp(2.5rem,8.6vw,9.5rem)] leading-none text-navy">
           {word(2)}
