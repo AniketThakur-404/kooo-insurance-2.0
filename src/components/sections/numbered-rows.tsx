@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap, useGSAP, EASE_OUT } from "@/lib/gsap";
+import { gsap, useGSAP, EASE_OUT, ScrollTrigger } from "@/lib/gsap";
 import { SplitReveal } from "@/components/motion/split-reveal";
 
 type NumberedRowsProps = {
@@ -10,7 +10,12 @@ type NumberedRowsProps = {
   items: { title?: string; text: string }[];
 };
 
-// Large numbered rows separated by hairlines that draw in as each row arrives.
+/**
+ * Large numbered rows separated by hairlines that draw in as each row arrives.
+ * From 1024px up the title column stays pinned (sticky) while the list scrolls
+ * past it: each row fills in from faded as it reaches the middle of the
+ * screen.
+ */
 export function NumberedRows({ title, intro, items }: NumberedRowsProps) {
   const ref = useRef<HTMLElement>(null);
 
@@ -24,6 +29,22 @@ export function NumberedRows({ title, intro, items }: NumberedRowsProps) {
           gsap.from(row.querySelectorAll("[data-cell]"), { y: 36, opacity: 0, duration: 1, stagger: 0.08, ease: EASE_OUT, scrollTrigger: st });
         });
       });
+
+      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+        const rows = gsap.utils.toArray<HTMLElement>("[data-row]");
+        // Rows wait faded, then fill in (and stay filled) once they reach the middle of the screen.
+        rows.forEach((row) => {
+          row.dataset.state = "idle";
+          ScrollTrigger.create({
+            trigger: row,
+            start: "top 60%",
+            onEnter: () => (row.dataset.state = "on"),
+            onLeaveBack: () => (row.dataset.state = "idle"),
+          });
+        });
+
+        return () => rows.forEach((row) => delete row.dataset.state);
+      });
     },
     { scope: ref },
   );
@@ -31,7 +52,7 @@ export function NumberedRows({ title, intro, items }: NumberedRowsProps) {
   return (
     <section ref={ref} className="relative z-10 bg-cloud py-28 md:py-36">
       <div className="grid gap-12 px-6 md:px-8 lg:grid-cols-[1fr_1.9fr]">
-        <div>
+        <div className="lg:sticky lg:top-[18svh] lg:self-start">
           <SplitReveal as="h2" className="text-[clamp(2.5rem,5vw,5rem)] leading-[1.02]">
             {title}
           </SplitReveal>
@@ -42,7 +63,7 @@ export function NumberedRows({ title, intro, items }: NumberedRowsProps) {
             <li
               key={item.title ?? item.text}
               data-row
-              className="relative grid grid-cols-[4.25rem_1fr] gap-x-6 gap-y-3 py-8 md:grid-cols-[7rem_1fr_1.3fr] md:py-10"
+              className="relative grid grid-cols-[4.25rem_1fr] gap-x-6 gap-y-3 py-8 transition-opacity duration-700 data-[state=idle]:opacity-25 md:grid-cols-[7rem_1fr_1.3fr] md:py-10 lg:py-20"
             >
               <span data-line aria-hidden className="absolute inset-x-0 top-0 h-px origin-left bg-navy/25" />
               <span data-cell className="font-heading text-5xl leading-none text-navy md:text-6xl">
