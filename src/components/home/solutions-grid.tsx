@@ -121,6 +121,17 @@ export function SolutionsGrid() {
         });
       });
       mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Rises over the pinned hero as a rounded inset card, then opens out to the screen edges.
+        // Top inset is in px (15% of the viewport), since the section itself is many screens tall.
+        gsap.fromTo(
+          ref.current,
+          { clipPath: () => `inset(${Math.round(window.innerHeight * 0.15)}px 6% 0px 6% round 28px)` },
+          {
+            clipPath: "inset(0px 0% 0px 0% round 0px)",
+            ease: "none",
+            scrollTrigger: { trigger: ref.current, start: "top bottom", end: "top top", scrub: 0.8, invalidateOnRefresh: true },
+          },
+        );
         gsap.utils.toArray<HTMLElement>("[data-card-inner]").forEach((card) => {
           gsap.from(card, {
             opacity: 0,
