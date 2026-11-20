@@ -13,8 +13,7 @@ import { RollText } from "@/components/motion/roll-text";
  * both in soft white over a dark fade so the video stays the focus.
  *
  * Intro: the video settles from a slight zoom while each word rises and
- * decodes from dots. The hero stays pinned (sticky) while the next panel
- * scrolls up over it.
+ * decodes from dots.
  */
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -30,14 +29,6 @@ export function Hero() {
       }
       gsap.set("[data-word-inner]", { yPercent: 105 });
       gsap.set("[data-hero-label]", { opacity: 0, y: 12 });
-
-      // While the next panel covers the hero, it sinks back slightly.
-      gsap.to("[data-hero-stage]", {
-        scale: 0.9,
-        opacity: 0.3,
-        ease: "none",
-        scrollTrigger: { trigger: ref.current?.parentElement, start: "top top", end: "+=100%", scrub: 0.8 },
-      });
     },
     { scope: ref },
   );
@@ -74,10 +65,10 @@ export function Hero() {
   );
 
   return (
-    <section ref={ref} className="sticky top-0 aspect-video w-full overflow-hidden bg-navy md:aspect-auto md:h-svh">
+    <section ref={ref} className="relative aspect-video w-full overflow-hidden bg-navy md:aspect-auto md:h-svh">
       {/* Phones: as tall as the video (16:9), not the full screen. From md up: full screen. */}
       <h1 className="sr-only">{words.join(" ")}</h1>
-      <div data-hero-stage className="relative h-full will-change-transform">
+      <div className="relative h-full">
         {/* Full-bleed looping video, muted so browsers allow autoplay. */}
         <video
           data-film

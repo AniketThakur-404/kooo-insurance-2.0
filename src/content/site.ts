@@ -248,12 +248,17 @@ export const home = {
     "At Kooo Insurance, we provide a wide range of insurance solutions to protect what matters most, from business operations to personal assets.",
   // Headings from the home page, paired with Kooo's own lines from the About page.
   whyChooseUs: [
-    { title: "Friendly Support", text: "Personal service backed by strong insurer relationships." },
-    { title: "Clear and Simple", text: "We do not expect you to speak the language of insurance. That is our job." },
-    { title: "Expert guidance", text: "Nationwide coverage with local understanding, and solutions designed to keep you growing, building, and moving forward." },
-    { title: "Trusted Insurers", text: "A broad panel of insurers delivering protection for businesses and families nationwide." },
+    { title: "Friendly Support", text: "Personal service backed by strong insurer relationships.", image: "/images/photos/pexels-840996.jpg" },
+    { title: "Clear and Simple", text: "We do not expect you to speak the language of insurance. That is our job.", image: "/images/photos/pexels-6230973.jpg" },
+    { title: "Expert guidance", text: "Nationwide coverage with local understanding, and solutions designed to keep you growing, building, and moving forward.", image: "/images/photos/pexels-933964.jpg" },
+    { title: "Trusted Insurers", text: "A broad panel of insurers delivering protection for businesses and families nationwide.", image: "/images/photos/pexels-327540.jpg" },
   ],
-  insurersTitle: "Some of the Insurers We Work With",
+  serviceSteps: [
+    { title: "Tell us what needs cover", text: "Describe your business or household, what you want to protect and when you need cover to start.", image: "/images/photos/pexels-1128317.jpg" },
+    { title: "Talk through the options", text: "Discuss the available policies with your broker, including limits, exclusions and excesses.", image: "/images/photos/pexels-585419.jpg" },
+    { title: "Choose your cover", text: "Confirm your choice with your broker. Keep your policy documents handy and tell us when your circumstances change.", image: "/images/photos/pexels-8961401.jpg" },
+  ],
+  insurersTitle: { lead: "Insurers and underwriting agencies", accent: "we work with" },
   insurersText:
     "Kooo Insurance partners with a broad panel of insurers. Below are a selection of providers we work with to deliver protection for businesses and families nationwide.",
   testimonialsIntro:

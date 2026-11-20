@@ -4,12 +4,13 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { gsap, useGSAP } from "@/lib/gsap";
-import { categories, home, type Category } from "@/content/site";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { useUi } from "@/lib/ui-store";
+import { categories, type Category } from "@/content/site";
 import { ArrowBox } from "@/components/ui/arrow-box";
-import { SplitReveal } from "@/components/motion/split-reveal";
 import { RollText } from "@/components/motion/roll-text";
 import { cn } from "@/lib/utils";
+import { sectionHeadingClass } from "@/components/sections/section-heading";
 
 // Zig-zag placement from 1024px up: each card overlaps the row above by 40% of its height.
 // Below that the cards sit in a plain one- or two-column grid.
@@ -21,8 +22,160 @@ const placement = [
   "lg:col-start-1 lg:row-start-4 lg:-mt-[40%]",
   "lg:col-start-3 lg:row-start-4 lg:-mt-[40%]",
 ];
-// Parallax drift per card (px over the section), so the three columns move at different speeds.
-const drift = [0, -90, -200, 0, -90, -200];
+const scatter = [
+  { x: 0.04, y: -0.28, rotation: -8 },
+  { x: -0.29, y: -0.12, rotation: -16 },
+  { x: 0.31, y: -0.13, rotation: 13 },
+  { x: -0.22, y: 0.24, rotation: 12 },
+  { x: 0.01, y: 0.27, rotation: -11 },
+  { x: 0.26, y: 0.23, rotation: 15 },
+];
+
+// The showcase runs on any screen tall enough for it (phones in portrait included);
+// `compact` tunes card size and orbit for screens under 1024px wide.
+const showcaseDesktop = "(min-width: 1024px) and (min-height: 540px)";
+const showcaseCompact = "(max-width: 1023.98px) and (min-height: 540px)";
+const galleryStart = 0.57;
+
+function animateSolutionsShowcase(stage: HTMLElement, track: HTMLElement, compact = false) {
+  const cards = Array.from(track.querySelectorAll<HTMLElement>("[data-card]"));
+  const orbitTitle = stage.querySelector<HTMLElement>("[data-orbit-title]");
+  const galleryTitle = stage.querySelector<HTMLElement>("[data-gallery-title]");
+  if (!orbitTitle || !galleryTitle) return;
+
+  gsap.set(stage, { height: "min(82svh, calc(100svh - 7rem))", overflow: "clip" });
+  gsap.set(orbitTitle, { display: "block", opacity: 0 });
+  gsap.set(galleryTitle, { position: "absolute", top: 0, left: 0, right: 0, opacity: 0 });
+  gsap.set(track, {
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    width: "max-content",
+    height: "100%",
+    x: 0,
+  });
+  gsap.set(cards, {
+    width: compact ? "min(72vw, 48svh, 26rem)" : "min(33vw, 64svh, calc(100svh - 13rem))",
+    flexShrink: 0,
+    marginTop: 0,
+    x: 0,
+    y: 0,
+    rotation: 0,
+    scale: 1,
+  });
+
+  if (compact) {
+    // Long titles wrap to more lines; give every card the tallest card's height so the gallery row lines up.
+    const inners = Array.from(track.querySelectorAll<HTMLElement>("[data-card-inner]"));
+    const tallest = Math.max(...inners.map((inner) => inner.offsetHeight));
+    gsap.set(inners, { height: tallest });
+  }
+
+  const setTrackX = gsap.quickSetter(track, "x", "px");
+  const setCards = cards.map((card) => gsap.quickSetter(card, "css"));
+  const setOrbitTitleOpacity = gsap.quickSetter(orbitTitle, "opacity");
+  const setGalleryTitleOpacity = gsap.quickSetter(galleryTitle, "opacity");
+  const ease = gsap.parseEase("sine.inOut");
+  const clamp = gsap.utils.clamp(0, 1);
+  const wrapRotation = gsap.utils.wrap(-180, 180);
+  const mix = gsap.utils.interpolate;
+  const scroll = { progress: 0 };
+  let width = 0;
+  let height = 0;
+  let travel = 0;
+  let galleryOffset = 0;
+  let cardCenters: number[] = [];
+
+  const measure = () => {
+    width = stage.clientWidth;
+    height = stage.clientHeight;
+    travel = Math.max(0, track.offsetWidth - width);
+    galleryOffset = galleryTitle.offsetHeight / 2 + 14;
+    cardCenters = cards.map((card) => card.offsetLeft + card.offsetWidth / 2);
+  };
+
+  function render() {
+    const { progress } = scroll;
+    const gather = ease(clamp((progress - 0.04) / 0.21));
+    const orbit = ease(clamp((progress - 0.25) / 0.16));
+    const align = ease(clamp((progress - 0.41) / (galleryStart - 0.41)));
+    const gallery = clamp((progress - galleryStart) / (1 - galleryStart));
+    setTrackX(-travel * gallery);
+    setOrbitTitleOpacity(1 - ease(clamp((progress - 0.38) / 0.09)));
+    setGalleryTitleOpacity(ease(clamp((progress - 0.47) / (galleryStart - 0.47))));
+
+    setCards.forEach((setCard, index) => {
+      const start = scatter[index % scatter.length];
+      const angle = -Math.PI / 2 + (index / cards.length) * 2 * Math.PI + orbit * (2 * Math.PI / 3);
+      const orbitX = Math.cos(angle) * (compact ? width * 0.36 : Math.min(width * 0.28, height * 0.55));
+      const orbitY = Math.sin(angle) * height * (compact ? 0.27 : 0.3);
+      const orbitRotation = wrapRotation((angle * 180) / Math.PI + 90);
+      const x = mix(start.x * width, orbitX, gather);
+      const y = mix(start.y * height, orbitY, gather);
+      const rotation = mix(start.rotation, orbitRotation, gather);
+
+      setCard({
+        x: mix(width / 2 - cardCenters[index] + x, 0, align),
+        y: mix(y, galleryOffset, align),
+        rotation: mix(rotation, 0, align),
+        scale: mix(compact ? mix(0.34, 0.28, gather) : mix(0.37, 0.32, gather), 1, align),
+      });
+    });
+  }
+
+  measure();
+  render();
+  const tween = gsap.to(scroll, {
+    progress: 1,
+    ease: "none",
+    onUpdate: render,
+    scrollTrigger: {
+      trigger: stage,
+      start: "top 104px",
+      end: () => {
+        measure();
+        return `+=${Math.max(window.innerHeight * 1.65, travel / (1 - galleryStart))}`;
+      },
+      pin: true,
+      scrub: 0.5,
+      anticipatePin: 1,
+      onRefresh: () => {
+        measure();
+        render();
+      },
+    },
+  });
+
+  // Keep keyboard focus visible when tabbing to a card outside the gallery viewport.
+  function revealFocusedCard(event: FocusEvent) {
+    const link = event.target;
+    if (!(link instanceof HTMLElement) || !link.matches(":focus-visible")) return;
+
+    const card = link.closest<HTMLElement>("[data-card]");
+    const trigger = tween.scrollTrigger;
+    if (!card || !trigger) return;
+
+    const bounds = card.getBoundingClientRect();
+    const viewport = stage.getBoundingClientRect();
+    if (scroll.progress >= galleryStart && bounds.left >= viewport.left - 1 && bounds.right <= viewport.right + 1) return;
+
+    const center = cardCenters[cards.indexOf(card)];
+    const offset = travel ? clamp((center - width / 2) / travel) : 0;
+    const progress = mix(galleryStart, 1, offset);
+    const y = mix(trigger.start, trigger.end, progress);
+    const lenis = useUi.getState().lenis;
+    if (lenis) lenis.scrollTo(y, { immediate: true });
+    else trigger.scroll(y);
+    ScrollTrigger.update();
+    trigger.getTween()?.progress(1);
+  }
+
+  stage.addEventListener("focusin", revealFocusedCard);
+  return () => {
+    stage.removeEventListener("focusin", revealFocusedCard);
+    galleryTitle.style.removeProperty("opacity");
+  };
+}
 
 type CardProps = { category: Category; index: number; open: boolean; onToggle: () => void };
 
@@ -106,32 +259,25 @@ function SolutionCard({ category: c, index, open, onToggle }: CardProps) {
 
 export function SolutionsGrid() {
   const ref = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const [openCard, setOpenCard] = useState<string | null>(null);
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
-      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
-        gsap.utils.toArray<HTMLElement>("[data-card]").forEach((card, i) => {
-          gsap.fromTo(
-            card,
-            { y: 0 },
-            { y: drift[i], ease: "none", scrollTrigger: { trigger: "[data-grid]", start: "top bottom", end: "bottom top", scrub: 0.8 } },
-          );
-        });
+      mm.add(`${showcaseDesktop} and (prefers-reduced-motion: no-preference)`, () => {
+        if (stageRef.current && trackRef.current) {
+          return animateSolutionsShowcase(stageRef.current, trackRef.current);
+        }
       });
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Rises over the pinned hero as a rounded inset card, then opens out to the screen edges.
-        // Top inset is in px (15% of the viewport), since the section itself is many screens tall.
-        gsap.fromTo(
-          ref.current,
-          { clipPath: () => `inset(${Math.round(window.innerHeight * 0.15)}px 6% 0px 6% round 28px)` },
-          {
-            clipPath: "inset(0px 0% 0px 0% round 0px)",
-            ease: "none",
-            scrollTrigger: { trigger: ref.current, start: "top bottom", end: "top top", scrub: 0.8, invalidateOnRefresh: true },
-          },
-        );
+      mm.add(`${showcaseCompact} and (prefers-reduced-motion: no-preference)`, () => {
+        if (stageRef.current && trackRef.current) {
+          return animateSolutionsShowcase(stageRef.current, trackRef.current, true);
+        }
+      });
+      // Too short for the pinned showcase (e.g. a phone in landscape): cards just fade up.
+      mm.add("(height < 540px) and (prefers-reduced-motion: no-preference)", () => {
         gsap.utils.toArray<HTMLElement>("[data-card-inner]").forEach((card) => {
           gsap.from(card, {
             opacity: 0,
@@ -147,24 +293,36 @@ export function SolutionsGrid() {
   );
 
   return (
-    <section ref={ref} className="relative z-10 bg-cloud py-28 md:py-40">
-      <div className="px-6 md:px-8">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <SplitReveal as="h2" className="max-w-[11ch] text-[clamp(2.6rem,5.6vw,5.75rem)] leading-[1.02]">
-            Our insurance solutions
-          </SplitReveal>
-          <Link
-            href="/insurancesolutions"
-            className="group border-b border-navy pb-1 font-button text-lg text-navy"
-          >
-            <RollText text="All solutions" />
-          </Link>
-        </div>
-        <SplitReveal className="mt-8 max-w-2xl text-lg leading-relaxed md:text-xl">{home.solutionsIntro}</SplitReveal>
-
-        <div data-grid className="mt-20 grid gap-5 sm:grid-cols-2 md:mt-28 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-0">
+    <section ref={ref} aria-labelledby="home-solutions-title" className="relative z-10 bg-cloud px-6 py-12 md:px-8 md:py-16">
+      <div className="mb-6 flex justify-end">
+        <Link
+          href="/insurancesolutions"
+          className="group border-b border-navy pb-1 font-button text-lg text-navy"
+        >
+          <RollText text="All solutions" />
+        </Link>
+      </div>
+      {/* Below 1024px the stage bleeds to the screen edges so gallery cards slide off-screen;
+          the margin sits on this wrapper because ScrollTrigger moves margins off a pinned element. */}
+      <div className="max-md:-mx-6 md:max-lg:-mx-8">
+      <div ref={stageRef} className="relative">
+        <h2
+          aria-hidden="true"
+          data-orbit-title
+          className="pointer-events-none absolute left-1/2 top-1/2 z-10 hidden w-max -translate-x-1/2 -translate-y-1/2 text-center text-[clamp(1.35rem,3vw,3.5rem)] leading-[1.02]"
+        >
+          Choose your<br /><span className="text-kooo-green-dark">insurance cover</span>
+        </h2>
+        <h2
+          id="home-solutions-title"
+          data-gallery-title
+          className={cn("pointer-events-none relative z-10 mb-8", sectionHeadingClass)}
+        >
+          Insurance <span className="text-kooo-green-dark">categories</span>
+        </h2>
+        <div ref={trackRef} data-grid className="grid gap-5 max-md:px-6 sm:grid-cols-2 md:max-lg:px-8 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-0">
           {categories.map((c, i) => (
-            <div key={c.slug} data-card className={cn("will-change-transform", placement[i])}>
+            <div key={c.slug} data-card className={placement[i]}>
               <SolutionCard
                 category={c}
                 index={i}
@@ -174,6 +332,7 @@ export function SolutionsGrid() {
             </div>
           ))}
         </div>
+      </div>
       </div>
     </section>
   );

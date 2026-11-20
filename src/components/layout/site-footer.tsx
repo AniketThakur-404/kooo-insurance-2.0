@@ -68,9 +68,9 @@ export function SiteFooter() {
     <footer ref={ref} className="bg-cloud p-2 sm:p-3 md:p-4">
       <div
         data-footer-panel
-        className="origin-bottom rounded-[2rem] bg-[linear-gradient(115deg,#15cb8b_0%,#b9efdc_38%,#d6dbe1_72%,#eeeeee_100%)] p-2 will-change-transform md:p-2.5"
+        className="origin-bottom bg-[linear-gradient(115deg,#15cb8b_0%,#b9efdc_38%,#d6dbe1_72%,#eeeeee_100%)] p-2 will-change-transform md:p-2.5"
       >
-        <div className="overflow-hidden rounded-[1.6rem] bg-navy text-white">
+        <div className="overflow-hidden bg-navy text-white">
           <div data-footer-inner className="px-6 pb-6 pt-8 will-change-transform md:px-10 md:pt-10">
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr_1fr_1.1fr]">
               <div>

@@ -9,6 +9,7 @@ type Tag = "p" | "h1" | "h2" | "h3" | "span" | "div";
 type SplitRevealProps = {
   children: React.ReactNode;
   as?: Tag;
+  id?: string;
   className?: string;
   /** "scroll" waits for the text to enter the viewport; "ready" plays when the page is uncovered. */
   trigger?: "scroll" | "ready";
@@ -20,6 +21,7 @@ type SplitRevealProps = {
 export function SplitReveal({
   children,
   as: Tag = "p",
+  id,
   className,
   trigger = "scroll",
   delay = 0,
@@ -58,6 +60,7 @@ export function SplitReveal({
     // Hidden until the reveal starts so lines never flash in place first.
     <Tag
       ref={ref as React.Ref<never>}
+      id={id}
       className={className}
       style={trigger === "ready" && !ready ? { visibility: "hidden" } : undefined}
     >

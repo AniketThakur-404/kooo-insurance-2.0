@@ -18,6 +18,7 @@ function Field({
   error,
   required,
   autoComplete,
+  className,
 }: {
   label: string;
   name: string;
@@ -25,9 +26,10 @@ function Field({
   error?: string;
   required?: boolean;
   autoComplete?: string;
+  className?: string;
 }) {
   return (
-    <label className="block">
+    <label className={cn("block min-w-0", className)}>
       <span className="mb-1.5 block text-[15px] font-medium text-navy">
         {label}
         {required && <span className="text-red-700"> *</span>}
@@ -45,7 +47,24 @@ function Field({
   );
 }
 
-export function ContactForm() {
+type ContactFormProps = {
+  /**
+   * "compact" keeps only name, email, phone and a short message, and files the
+   * enquiry under `insuranceType` (e.g. a claim from the home page banner).
+   */
+  variant?: "full" | "compact";
+  insuranceType?: string;
+  messageLabel?: string;
+  submitLabel?: string;
+};
+
+export function ContactForm({
+  variant = "full",
+  insuranceType,
+  messageLabel = "Tell us more about what you need",
+  submitLabel = "Submit",
+}: ContactFormProps = {}) {
+  const compact = variant === "compact";
   const [state, formAction, pending] = useActionState(submitEnquiry, initialState);
 
   if (state.status === "success") {
@@ -62,29 +81,36 @@ export function ContactForm() {
   }
 
   return (
-    <form action={formAction} className="grid gap-5 sm:grid-cols-2" noValidate>
+    // The compact form keeps first/last name side by side even on phones, so it stays short.
+    <form action={formAction} className={cn("grid sm:grid-cols-2", compact ? "grid-cols-2 gap-3 sm:gap-4" : "gap-5")} noValidate>
       <Field label="First name" name="firstName" required autoComplete="given-name" error={state.errors?.firstName} />
       <Field label="Last name" name="lastName" required autoComplete="family-name" error={state.errors?.lastName} />
-      <Field label="Email" name="email" type="email" required autoComplete="email" error={state.errors?.email} />
-      <Field label="Phone number" name="phone" type="tel" required autoComplete="tel" error={state.errors?.phone} />
-      <Field label="Business Name" name="businessName" autoComplete="organization" />
-      <Field label="ABN" name="abn" />
+      <Field label="Email" name="email" type="email" required autoComplete="email" error={state.errors?.email} className={cn(compact && "col-span-2 sm:col-span-1")} />
+      <Field label="Phone number" name="phone" type="tel" required autoComplete="tel" error={state.errors?.phone} className={cn(compact && "col-span-2 sm:col-span-1")} />
+      {compact ? (
+        insuranceType && <input type="hidden" name="insuranceType" value={insuranceType} />
+      ) : (
+        <>
+          <Field label="Business Name" name="businessName" autoComplete="organization" />
+          <Field label="ABN" name="abn" />
 
-      <label className="block sm:col-span-2">
-        <span className="mb-1.5 block text-[15px] font-medium text-navy">Type of Insurance</span>
-        <select name="insuranceType" defaultValue="" className={inputClass}>
-          <option value="" disabled>
-            Select an option
-          </option>
-          {contactPage.insuranceTypes.map((type) => (
-            <option key={type}>{type}</option>
-          ))}
-        </select>
-      </label>
+          <label className="block sm:col-span-2">
+            <span className="mb-1.5 block text-[15px] font-medium text-navy">Type of Insurance</span>
+            <select name="insuranceType" defaultValue="" className={inputClass}>
+              <option value="" disabled>
+                Select an option
+              </option>
+              {contactPage.insuranceTypes.map((type) => (
+                <option key={type}>{type}</option>
+              ))}
+            </select>
+          </label>
+        </>
+      )}
 
-      <label className="block sm:col-span-2">
-        <span className="mb-1.5 block text-[15px] font-medium text-navy">Tell us more about what you need</span>
-        <textarea name="message" rows={5} className={cn(inputClass, "resize-y")} />
+      <label className={cn("block", compact ? "col-span-2" : "sm:col-span-2")}>
+        <span className="mb-1.5 block text-[15px] font-medium text-navy">{messageLabel}</span>
+        <textarea name="message" rows={compact ? 3 : 5} className={cn(inputClass, "resize-y")} />
       </label>
 
       {state.status === "error" && (
@@ -98,10 +124,13 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex h-12 items-center justify-center gap-2 bg-navy px-8 font-button font-medium text-white transition-colors hover:bg-navy-deep disabled:opacity-60 sm:col-span-2 sm:justify-self-start"
+        className={cn(
+          "inline-flex h-12 items-center justify-center gap-2 bg-navy px-8 font-button font-medium text-white transition-colors hover:bg-navy-deep disabled:opacity-60 sm:col-span-2 sm:justify-self-start",
+          compact && "col-span-2",
+        )}
       >
         {pending && <Loader2 className="size-4 animate-spin" />}
-        Submit
+        {submitLabel}
       </button>
     </form>
   );
