@@ -223,10 +223,10 @@ function SolutionCard({ category: c, index, open, onToggle }: CardProps) {
 
         {/* Shrinks (and clips) before the title does, so the card title is always fully visible. */}
         <div className="-mt-6 min-h-0 flex-1 space-y-3 overflow-hidden pr-12 text-navy">
-          <p className="hidden translate-y-2 text-[15px] leading-snug sm:text-base sm:leading-relaxed opacity-0 transition-[opacity,translate] duration-500 group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100 pointer-coarse:block">
+          <p className="hidden translate-y-2 text-[15px] leading-snug sm:text-base sm:leading-relaxed md:text-lg lg:text-xl opacity-0 transition-[opacity,translate] duration-500 group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100 pointer-coarse:block">
             {c.summary}
           </p>
-          <ul className="space-y-1 text-[15px] leading-snug sm:space-y-1.5 sm:text-base md:text-[17px]">
+          <ul className="space-y-1 text-[15px] leading-snug sm:space-y-1.5 sm:text-base md:space-y-2 md:text-lg lg:text-xl xl:space-y-2.5 xl:text-[1.4rem]">
             {c.items.slice(0, 5).map((item, j) => (
               <li
                 key={item.title}
