@@ -8,6 +8,7 @@ import { ImageReveal } from "@/components/motion/image-reveal";
 import { SplitReveal } from "@/components/motion/split-reveal";
 import { KoooLogo } from "@/components/brand/kooo-logo";
 import { CtaLink } from "@/components/ui/cta-link";
+import { CtaBand } from "@/components/sections/cta-band";
 
 export const metadata: Metadata = {
   title: "About",
@@ -65,6 +66,13 @@ export default function AboutPage() {
       </section>
 
       <NumberedRows title="Why choose Kooo" intro={about.whyIntro} items={about.why.map((text) => ({ text }))} />
+
+      <CtaBand
+        title="Referral Partners"
+        text="Accountants, finance and business brokers, vehicle dealers and property professionals can refer clients to Kooo. Find out how referrals work."
+        label="Become a Referral Partner"
+        href="/referral-partners"
+      />
     </>
   );
 }

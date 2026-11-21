@@ -9,9 +9,12 @@ import { RollText } from "@/components/motion/roll-text";
 import { FacebookIcon, InstagramIcon } from "@/components/ui/social-icons";
 
 const pages = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Insurance Solutions", href: "/insurancesolutions" },
+  { label: "Insurance" },
+  { label: "Industries" },
+  { label: "Claims", href: "/claims" },
+  { label: "About Kooo", href: "/about" },
+  { label: "Referral Partners", href: "/referral-partners" },
+  { label: "FAQs", href: "/faqs" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -81,23 +84,27 @@ export function SiteFooter() {
               <nav aria-label="Footer">
                 <ul className="space-y-2">
                   {pages.map((p) => (
-                    <li key={p.href}>
-                      <Link href={p.href} className="group inline-block text-xl text-kooo-mint md:text-2xl">
-                        <RollText text={p.label} />
-                      </Link>
+                    <li key={p.label}>
+                      {p.href ? (
+                        <Link href={p.href} className="group inline-block text-xl text-kooo-mint md:text-2xl">
+                          <RollText text={p.label} />
+                        </Link>
+                      ) : (
+                        <span className="text-xl text-kooo-mint/75 md:text-2xl">
+                          {p.label} <span className="ml-1 text-xs text-white/70">Coming soon</span>
+                        </span>
+                      )}
                     </li>
                   ))}
                 </ul>
               </nav>
 
               <div>
-                <p className="mb-3 text-base text-white/70">Insurance solutions</p>
+                <p className="mb-3 text-base text-white/70">Insurance solutions · Coming soon</p>
                 <ul className="space-y-2">
                   {categories.map((c) => (
                     <li key={c.slug}>
-                      <Link href={`/${c.slug}`} className="group inline-block text-base text-white/90 hover:text-kooo-mint md:text-[17px]">
-                        <RollText text={c.name} stagger={10} />
-                      </Link>
+                      <span className="text-base text-white/75 md:text-[17px]">{c.name}</span>
                     </li>
                   ))}
                 </ul>

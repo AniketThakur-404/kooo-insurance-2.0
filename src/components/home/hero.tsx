@@ -1,15 +1,13 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
 import { gsap, scrambleIn, useGSAP } from "@/lib/gsap";
 import { prefersReducedMotion, useUi } from "@/lib/ui-store";
 import { categories, home } from "@/content/site";
-import { RollText } from "@/components/motion/roll-text";
 
 /**
  * Full-bleed video hero. The video fills the screen edge to edge; the tagline
- * sits in the bottom-left corner and the category links run along the bottom,
+ * sits in the bottom-left corner and the category names run along the bottom,
  * both in soft white over a dark fade so the video stays the focus.
  *
  * Intro: the video settles from a slight zoom while each word rises and
@@ -100,11 +98,7 @@ export function Hero() {
       </div>
       <ul className="absolute inset-x-0 bottom-0 hidden justify-between px-8 pb-5 font-button text-sm uppercase tracking-wider text-white/70 md:flex">
         {categories.map((c) => (
-          <li key={c.slug} data-hero-label>
-            <Link href={`/${c.slug}`} className="group inline-block transition-colors hover:text-white">
-              <RollText text={c.shortName} stagger={12} />
-            </Link>
-          </li>
+          <li key={c.slug} data-hero-label>{c.shortName}</li>
         ))}
       </ul>
     </section>

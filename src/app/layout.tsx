@@ -43,7 +43,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en-AU" className={`${alice.variable} ${sourceSans.variable} ${lato.variable} ${dmSans.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">
+      {/* Bottom padding on phones leaves room for the fixed Call / Request a Quote bar. */}
+      <body className="flex min-h-full flex-col pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
         <SmoothScroll>
           <TransitionOverlay />
           <SiteHeader />

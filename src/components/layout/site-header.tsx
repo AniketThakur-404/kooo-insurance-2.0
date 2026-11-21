@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { Phone } from "lucide-react";
 import { gsap, useGSAP, EASE_OUT } from "@/lib/gsap";
 import { useUi } from "@/lib/ui-store";
 import { categories, contact, tagline } from "@/content/site";
@@ -10,8 +11,8 @@ import { RollText } from "@/components/motion/roll-text";
 import { cn } from "@/lib/utils";
 
 const menuLinks = [
-  { label: "Insurance", href: "/insurancesolutions" },
-  { label: "Industries", href: "/industryinsurance" },
+  { label: "Insurance" },
+  { label: "Industries" },
   { label: "Claims", href: "/claims" },
   { label: "About Kooo", href: "/about" },
   { label: "Contact", href: "/contact" },
@@ -82,13 +83,35 @@ export function SiteHeader() {
             <KoooLogo className="h-11 w-auto md:h-12" title="" />
           </Link>
 
+          <div className="pointer-events-auto mt-2 flex items-center gap-2">
+          {/* Phone and quote stay in reach on tablets and up; phones get the bottom bar instead. */}
+          <a
+            href={contact.phoneHref}
+            className={cn(
+              "hidden h-11 items-center gap-2 px-4 font-button text-base font-medium transition-colors duration-500 md:inline-flex",
+              menuOpen ? "text-kooo-mint" : scrolled ? "bg-cloud/85 text-navy backdrop-blur-md" : "text-navy",
+            )}
+          >
+            <Phone className="size-4" aria-hidden />
+            {contact.phone}
+          </a>
+          <Link
+            href="/contact"
+            onClick={() => setMenuOpen(false)}
+            className={cn(
+              "group hidden h-11 items-center px-5 font-button text-base font-medium transition-colors duration-500 md:inline-flex",
+              menuOpen ? "border border-kooo-mint/60 text-kooo-mint hover:bg-kooo-mint hover:text-navy" : "border border-navy bg-white/70 text-navy hover:bg-navy hover:text-white",
+            )}
+          >
+            <RollText text="Request a Quote" />
+          </Link>
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-expanded={menuOpen}
             aria-controls="site-menu"
             className={cn(
-              "group pointer-events-auto mt-2 flex h-11 items-center gap-3 px-5 font-button text-base font-medium transition-colors duration-500",
+              "group flex h-11 items-center gap-3 px-5 font-button text-base font-medium transition-colors duration-500",
               menuOpen ? "bg-kooo-mint text-navy" : "bg-navy text-white hover:bg-navy-deep",
             )}
           >
@@ -108,8 +131,25 @@ export function SiteHeader() {
               />
             </span>
           </button>
+          </div>
         </div>
       </header>
+
+      {/* Phones: call and quote always one tap away. */}
+      <div
+        className={cn(
+          "fixed inset-x-0 bottom-0 z-50 grid grid-cols-2 gap-px bg-navy/20 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_-12px_rgba(6,20,46,0.4)] transition-transform duration-500 md:hidden",
+          menuOpen && "translate-y-full",
+        )}
+      >
+        <a href={contact.phoneHref} className="flex h-14 items-center justify-center gap-2 bg-white font-button font-medium text-navy">
+          <Phone className="size-4" aria-hidden />
+          Call {contact.phone}
+        </a>
+        <Link href="/contact" className="flex h-14 items-center justify-center bg-navy font-button font-medium text-white">
+          Request a Quote
+        </Link>
+      </div>
 
       <div
         ref={menuRef}
@@ -122,32 +162,45 @@ export function SiteHeader() {
           <nav aria-label="Main">
             <ul className="menu-list space-y-1">
               {menuLinks.map((link) => (
-                <li key={link.href} className="overflow-hidden transition-opacity duration-500">
-                  <Link
-                    href={link.href}
-                    data-menu-link
-                    onClick={() => setMenuOpen(false)}
-                    className="group block w-fit font-heading text-[clamp(1.75rem,5.5vw,3.75rem)] leading-[1.1] text-kooo-mint"
-                  >
-                    <RollText text={link.label} stagger={14} />
-                  </Link>
+                <li key={link.label} className="overflow-hidden transition-opacity duration-500">
+                  {link.href ? (
+                    <Link
+                      href={link.href}
+                      data-menu-link
+                      onClick={() => setMenuOpen(false)}
+                      className="group block w-fit font-heading text-[clamp(1.75rem,5.5vw,3.75rem)] leading-[1.1] text-kooo-mint"
+                    >
+                      <RollText text={link.label} stagger={14} />
+                    </Link>
+                  ) : (
+                    <span data-menu-link className="flex items-baseline gap-x-4 font-heading text-[clamp(1.75rem,5.5vw,3.75rem)] leading-[1.1] text-kooo-mint/75">
+                      {link.label} <span className="font-button text-xs text-white/70 sm:text-sm">Coming soon</span>
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>
           </nav>
           <div className="self-end">
             <p data-menu-fade className="mb-4 text-sm uppercase tracking-[0.2em] text-white/70">
-              Insurance solutions
+              Insurance solutions · Coming soon
             </p>
             <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
               {categories.map((c) => (
                 <li key={c.slug} data-menu-fade>
-                  <Link
-                    href={`/${c.slug}`}
-                    onClick={() => setMenuOpen(false)}
-                    className="group inline-block text-lg text-white/90 transition-colors hover:text-kooo-mint md:text-xl"
-                  >
-                    <RollText text={c.name} stagger={10} />
+                  <span className="text-lg text-white/75 md:text-xl">{c.name}</span>
+                </li>
+              ))}
+            </ul>
+            <ul data-menu-fade className="mt-6 flex flex-wrap gap-x-6 gap-y-2 border-t border-white/15 pt-5 text-base text-white/75">
+              {[
+                { label: "Referral Partners", href: "/referral-partners" },
+                { label: "FAQs", href: "/faqs" },
+                { label: "Notify us of a claim", href: "/claims#notify" },
+              ].map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} onClick={() => setMenuOpen(false)} className="hover:text-kooo-mint">
+                    {l.label}
                   </Link>
                 </li>
               ))}

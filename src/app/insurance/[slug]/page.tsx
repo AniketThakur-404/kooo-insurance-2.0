@@ -11,6 +11,8 @@ import { ChecklistPanel, PageFaqs, RelatedCards, SectionIntro, Statement, TileLi
 import { Breadcrumbs } from "@/components/detail/breadcrumbs";
 import { JsonLd, breadcrumbLd, faqLd } from "@/components/detail/json-ld";
 import { QuoteAside } from "@/components/detail/quote-aside";
+import { ScrollMarquee } from "@/components/motion/scroll-marquee";
+import { pagePhotos } from "@/content/images";
 
 export function generateStaticParams() {
   return products.map((p) => ({ slug: p.slug }));
@@ -47,6 +49,9 @@ export default async function ProductPage({ params }: PageProps<"/insurance/[slu
     return i ? [{ title: i.name, text: i.summary, href: industryHref(i.slug), image: i.image, tag: "Industry" }] : [];
   });
 
+  const [overviewImg, whoImg, panelImg, helpImg, faqImg] = pagePhotos(product.slug, 5, [product.image]);
+  const marquee = [product.name, ...product.relatedProducts.flatMap((slug) => getProduct(slug)?.name ?? [])];
+
   return (
     <>
       <JsonLd
@@ -65,11 +70,11 @@ export default async function ProductPage({ params }: PageProps<"/insurance/[slu
         ]}
       />
       <Breadcrumbs items={crumbs} />
-      <PageTitle words={product.titleWords} heading={product.name} intro={product.intro} />
+      <PageTitle words={product.titleWords} heading={product.name} intro={product.intro} image={product.image} tags={[category.name, "Australia-wide", "General advice and broking"]} />
 
-      <Statement label="Overview" text={product.overview} />
+      <Statement label="Overview" text={product.overview} image={overviewImg} />
 
-      <TileList title="Who it’s generally for" text={`${product.name} is commonly considered by:`} items={product.whoFor} />
+      <TileList title="Who it’s generally for" text={`${product.name} is commonly considered by:`} items={product.whoFor} image={whoImg} />
 
       <section className="relative z-10 px-6 pb-24 md:px-8 md:pb-32">
         <SectionIntro title="Common activities and risks" text="Situations that may lead a business to look at this cover." className="mb-10" />
@@ -82,16 +87,19 @@ export default async function ProductPage({ params }: PageProps<"/insurance/[slu
         items={product.options}
       />
 
+      <ScrollMarquee items={marquee} />
+
       <ChecklistPanel
+        image={panelImg}
         columns={[
           { title: "Limitations and considerations", items: product.considerations },
           { title: "Information for a quote", intro: "It helps to have these ready. If you don’t have everything, contact us anyway.", items: product.quoteInfo },
         ]}
       />
 
-      <ImageBand image={product.image} title="How Kooo helps" text={product.howWeHelp} link={{ label: "Claims support", href: "/claims" }} />
+      <ImageBand image={helpImg} title="How Kooo helps" text={product.howWeHelp} link={{ label: "Claims support", href: "/claims" }} />
 
-      <PageFaqs items={product.faqs} />
+      <PageFaqs items={product.faqs} image={faqImg} />
 
       <RelatedCards title="Related insurance" cards={relatedProducts} />
       <RelatedCards title="Related industries" cards={relatedIndustries} />

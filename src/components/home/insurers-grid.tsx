@@ -8,7 +8,7 @@ const insurerRows = [insurers.slice(0, midpoint), insurers.slice(midpoint)];
 
 export function InsurersGrid() {
   return (
-    <section className="relative z-10 bg-cloud pb-28 md:pb-36">
+    <section id="insurers" className="relative z-10 scroll-mt-24 bg-cloud pb-28 md:pb-36">
       <div className="px-6 md:px-8">
         <SectionHeading
           lead={home.insurersTitle.lead}

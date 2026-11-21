@@ -1,17 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/sections/section-heading";
 
 const industries = [
-  { title: "Trades and construction", text: "Builders, electricians and contractors working on site.", href: "/tradesconstructioninsurance", image: "/images/photos/pexels-4981810.jpg" },
-  { title: "Transport and logistics", text: "Owner-drivers, freight operators and commercial fleets.", href: "/truckfleetinsurance", image: "/images/photos/pexels-2199293.jpg" },
-  { title: "Health and community care", text: "Healthcare practices, NDIS providers and aged care services.", href: "/industryinsurance", image: "/images/photos/industry-healthcare.webp" },
-  { title: "Hospitality", text: "Restaurants, cafés, hotels and licensed venues.", href: "/industryinsurance", image: "/images/photos/pexels-2290753.jpg" },
-  { title: "Retail", text: "Independent shops, chemists, market stalls and kiosks.", href: "/industryinsurance", image: "/images/photos/industry-retail.webp" },
+  { title: "Trades and construction", text: "Builders, electricians and contractors working on site.", image: "/images/photos/pexels-4981810.jpg" },
+  { title: "Transport and logistics", text: "Owner-drivers, freight operators and commercial fleets.", image: "/images/photos/pexels-2199293.jpg" },
+  { title: "Health and community care", text: "Healthcare practices, NDIS providers and aged care services.", image: "/images/photos/industry-healthcare.webp" },
+  { title: "Hospitality", text: "Restaurants, cafés, hotels and licensed venues.", image: "/images/photos/pexels-2290753.jpg" },
+  { title: "Retail", text: "Independent shops, chemists, market stalls and kiosks.", image: "/images/photos/industry-retail.webp" },
 ];
 
 export function Industries() {
@@ -50,7 +49,7 @@ export function Industries() {
               <div id={`industry-details-${index}`} hidden={!open} className="pointer-events-none absolute inset-x-0 bottom-0 z-20 p-6 text-white md:p-8">
                 <span aria-hidden="true" className="font-heading text-3xl md:text-4xl">{industry.title}</span>
                 <p className="mt-2 max-w-md text-base text-white/90">{industry.text}</p>
-                <Link href={industry.href} className="pointer-events-auto mt-4 inline-block font-button text-kooo-mint underline underline-offset-4">Explore cover<span className="sr-only"> for {industry.title}</span></Link>
+                <p className="mt-4 font-button text-sm text-kooo-mint">Industry pages coming soon</p>
               </div>
             </article>
           );

@@ -10,6 +10,8 @@ import { ChecklistPanel, PageFaqs, RelatedCards, SectionIntro, TileList, type Re
 import { Breadcrumbs } from "@/components/detail/breadcrumbs";
 import { JsonLd, breadcrumbLd, faqLd } from "@/components/detail/json-ld";
 import { QuoteAside } from "@/components/detail/quote-aside";
+import { ScrollMarquee } from "@/components/motion/scroll-marquee";
+import { pagePhotos } from "@/content/images";
 
 export function generateStaticParams() {
   return industries.map((i) => ({ slug: i.slug }));
@@ -40,7 +42,9 @@ export default async function IndustryPage({ params }: PageProps<"/industries/[s
     title: item.title,
     description: item.text,
     href: item.product ? productHref(item.product) : undefined,
+    image: item.product ? getProduct(item.product)?.image : undefined,
   }));
+  const [whoImg, panelImg, helpImg, faqImg] = pagePhotos(industry.slug, 4, [industry.image]);
 
   const productCards: RelatedCard[] = [...new Set(industry.insurance.flatMap((i) => (i.product ? [i.product] : [])))]
     .slice(0, 4)
@@ -57,16 +61,18 @@ export default async function IndustryPage({ params }: PageProps<"/industries/[s
     <>
       <JsonLd data={[breadcrumbLd(crumbs), ...(industry.faqs.length ? [faqLd(industry.faqs)] : [])]} />
       <Breadcrumbs items={crumbs} />
-      <PageTitle words={industry.titleWords} heading={`${industry.name} Insurance`} intro={industry.intro} />
+      <PageTitle words={industry.titleWords} heading={`${industry.name} Insurance`} intro={industry.intro} image={industry.image} tags={["Industry insurance", "Australia-wide", "General advice and broking"]} />
 
-      <TileList title="Who this page is for" text="Businesses and organisations we work with in this industry include:" items={industry.audiences} />
+      <TileList title="Who this page is for" text="Businesses and organisations we work with in this industry include:" items={industry.audiences} image={whoImg} />
+
+      <ScrollMarquee items={industry.audiences} />
 
       <section className="relative z-10 px-6 pb-24 md:px-8 md:pb-32">
         <SectionIntro title="Activities and risks" text="Everyday activities in this industry and the risks that can come with them." className="mb-10" />
         <ListRows items={industry.risks.map((r) => ({ title: r.title, description: r.text }))} />
       </section>
 
-      <ImageBand image={industry.image} title="How Kooo helps" text={industry.howWeHelp} link={{ label: "Claims support", href: "/claims" }} />
+      <ImageBand image={helpImg} title="How Kooo helps" text={industry.howWeHelp} link={{ label: "Claims support", href: "/claims" }} />
 
       <section className="relative z-10 px-6 py-24 md:px-8 md:py-32">
         <SectionIntro
@@ -78,13 +84,14 @@ export default async function IndustryPage({ params }: PageProps<"/industries/[s
       </section>
 
       <ChecklistPanel
+        image={panelImg}
         columns={[
           { title: "Things to consider", items: industry.considerations },
           { title: "Information for a quote", intro: "It helps to have these ready. If you don’t have everything, contact us anyway.", items: industry.quoteInfo },
         ]}
       />
 
-      <PageFaqs items={industry.faqs} />
+      <PageFaqs items={industry.faqs} image={faqImg} />
 
       <RelatedCards title="Insurance for this industry" cards={productCards} />
       <RelatedCards title="Related industries" cards={industryCards} />

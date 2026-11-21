@@ -2,13 +2,10 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { useUi } from "@/lib/ui-store";
 import { categories, type Category } from "@/content/site";
 import { ArrowBox } from "@/components/ui/arrow-box";
-import { RollText } from "@/components/motion/roll-text";
 import { cn } from "@/lib/utils";
 import { sectionHeadingClass } from "@/components/sections/section-heading";
 
@@ -43,7 +40,12 @@ function animateSolutionsShowcase(stage: HTMLElement, track: HTMLElement, compac
   const galleryTitle = stage.querySelector<HTMLElement>("[data-gallery-title]");
   if (!orbitTitle || !galleryTitle) return;
 
-  gsap.set(stage, { height: "min(82svh, calc(100svh - 7rem))", overflow: "clip" });
+  // The stage pins 104px from the top. On phones it also stops above the fixed Call / Quote bar (3.5rem).
+  const phoneBar = window.matchMedia("(max-width: 767.98px)").matches;
+  gsap.set(stage, {
+    height: phoneBar ? "calc(100svh - 104px - 3.5rem - 1rem)" : "min(82svh, calc(100svh - 7rem))",
+    overflow: "clip",
+  });
   gsap.set(orbitTitle, { display: "block", opacity: 0 });
   gsap.set(galleryTitle, { position: "absolute", top: 0, left: 0, right: 0, opacity: 0 });
   gsap.set(track, {
@@ -64,12 +66,9 @@ function animateSolutionsShowcase(stage: HTMLElement, track: HTMLElement, compac
     scale: 1,
   });
 
-  if (compact) {
-    // Long titles wrap to more lines; give every card the tallest card's height so the gallery row lines up.
-    const inners = Array.from(track.querySelectorAll<HTMLElement>("[data-card-inner]"));
-    const tallest = Math.max(...inners.map((inner) => inner.offsetHeight));
-    gsap.set(inners, { height: tallest });
-  }
+  const inners = Array.from(track.querySelectorAll<HTMLElement>("[data-card-inner]"));
+  // Space between the gallery heading and the top of the cards.
+  const titleGap = compact ? 28 : 14 * 2;
 
   const setTrackX = gsap.quickSetter(track, "x", "px");
   const setCards = cards.map((card) => gsap.quickSetter(card, "css"));
@@ -89,8 +88,19 @@ function animateSolutionsShowcase(stage: HTMLElement, track: HTMLElement, compac
   const measure = () => {
     width = stage.clientWidth;
     height = stage.clientHeight;
+    const titleHeight = galleryTitle.offsetHeight;
+    if (compact) {
+      // Phones and tablets: every card gets the same height, short enough to sit fully
+      // below the heading, so nothing overlaps. It uses the space available, up to a tall portrait.
+      const available = height - titleHeight - titleGap - 8;
+      const cardHeight = Math.max(300, Math.min(available, cards[0].offsetWidth * 1.7));
+      gsap.set(inners, { height: cardHeight, minHeight: 0 });
+      // Cards are centred in the stage; push them down so their tops clear the heading.
+      galleryOffset = titleHeight + titleGap - (height - cardHeight) / 2;
+    } else {
+      galleryOffset = titleHeight / 2 + titleGap / 2;
+    }
     travel = Math.max(0, track.offsetWidth - width);
-    galleryOffset = galleryTitle.offsetHeight / 2 + 14;
     cardCenters = cards.map((card) => card.offsetLeft + card.offsetWidth / 2);
   };
 
@@ -148,10 +158,10 @@ function animateSolutionsShowcase(stage: HTMLElement, track: HTMLElement, compac
 
   // Keep keyboard focus visible when tabbing to a card outside the gallery viewport.
   function revealFocusedCard(event: FocusEvent) {
-    const link = event.target;
-    if (!(link instanceof HTMLElement) || !link.matches(":focus-visible")) return;
+    const control = event.target;
+    if (!(control instanceof HTMLElement) || !control.matches(":focus-visible")) return;
 
-    const card = link.closest<HTMLElement>("[data-card]");
+    const card = control.closest<HTMLElement>("[data-card]");
     const trigger = tween.scrollTrigger;
     if (!card || !trigger) return;
 
@@ -174,23 +184,22 @@ function animateSolutionsShowcase(stage: HTMLElement, track: HTMLElement, compac
   return () => {
     stage.removeEventListener("focusin", revealFocusedCard);
     galleryTitle.style.removeProperty("opacity");
+    // Heights set on refresh fall outside the matchMedia context, so clear them here.
+    gsap.set(inners, { clearProps: "height,minHeight" });
   };
 }
 
 type CardProps = { category: Category; index: number; open: boolean; onToggle: () => void };
 
 /**
- * Category photo card. With a mouse, hovering sweeps a mint panel up over the
- * photo listing the covers, and the whole card links through. On touch
- * screens there is no hover, so a tap opens the same panel with the
- * category summary and an "Explore" link; tapping again closes it.
+ * Category photo card with a mint panel that lists covers on hover or activation.
  */
 function SolutionCard({ category: c, index, open, onToggle }: CardProps) {
   return (
     <article
       data-card-inner
       data-open={open}
-      className="group relative isolate flex min-h-[26rem] flex-col overflow-hidden bg-navy p-5 md:p-6 lg:aspect-square lg:min-h-0"
+      className="group relative isolate flex min-h-[26rem] flex-col overflow-hidden bg-navy p-4 sm:p-5 md:p-6 lg:aspect-square lg:min-h-0"
     >
       <div
         aria-hidden
@@ -201,28 +210,29 @@ function SolutionCard({ category: c, index, open, onToggle }: CardProps) {
       <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/20 to-navy/55" />
       <div
         aria-hidden
-        className="absolute inset-0 origin-bottom scale-y-0 bg-kooo-mint transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-y-100 group-has-[a:focus-visible]:scale-y-100 group-data-[open=true]:scale-y-100"
+        className="absolute inset-0 origin-bottom scale-y-0 bg-kooo-mint transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-y-100 group-data-[open=true]:scale-y-100"
       />
 
       <div className="relative flex flex-1 flex-col">
         <div className="flex items-start justify-between gap-4">
-          <span className="text-sm tabular-nums text-white transition-opacity duration-300 group-hover:opacity-0 group-has-[a:focus-visible]:opacity-0 group-data-[open=true]:opacity-0">
+          <span className="text-sm tabular-nums text-white transition-opacity duration-300 group-hover:opacity-0 group-data-[open=true]:opacity-0">
             {String(index + 1).padStart(2, "0")}
           </span>
           <ArrowBox open={open} />
         </div>
 
-        <div className="-mt-6 space-y-3 pr-12 text-navy">
-          <p className="hidden translate-y-2 text-base leading-relaxed opacity-0 transition-[opacity,translate] duration-500 group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100 pointer-coarse:block">
+        {/* Shrinks (and clips) before the title does, so the card title is always fully visible. */}
+        <div className="-mt-6 min-h-0 flex-1 space-y-3 overflow-hidden pr-12 text-navy">
+          <p className="hidden translate-y-2 text-[15px] leading-snug sm:text-base sm:leading-relaxed opacity-0 transition-[opacity,translate] duration-500 group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100 pointer-coarse:block">
             {c.summary}
           </p>
-          <ul className="space-y-1.5 text-base md:text-[17px]">
+          <ul className="space-y-1 text-[15px] leading-snug sm:space-y-1.5 sm:text-base md:text-[17px]">
             {c.items.slice(0, 5).map((item, j) => (
               <li
                 key={item.title}
                 style={{ transitionDelay: `${j * 45}ms` }}
                 className={cn(
-                  "translate-y-2 opacity-0 transition-[opacity,translate] duration-500 group-hover:translate-y-0 group-hover:opacity-100 group-has-[a:focus-visible]:translate-y-0 group-has-[a:focus-visible]:opacity-100 group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100",
+                  "translate-y-2 opacity-0 transition-[opacity,translate] duration-500 group-hover:translate-y-0 group-hover:opacity-100 group-data-[open=true]:translate-y-0 group-data-[open=true]:opacity-100",
                   j >= 3 && "pointer-coarse:hidden",
                 )}
               >
@@ -230,28 +240,19 @@ function SolutionCard({ category: c, index, open, onToggle }: CardProps) {
               </li>
             ))}
           </ul>
-          <Link
-            href={`/${c.slug}`}
-            tabIndex={open ? 0 : -1}
-            className="pointer-events-none relative z-[3] hidden items-center gap-2 border-b border-navy pb-0.5 font-button text-base font-medium opacity-0 transition-opacity duration-500 group-data-[open=true]:pointer-events-auto group-data-[open=true]:opacity-100 pointer-coarse:inline-flex"
-          >
-            Explore {c.shortName} insurance <ArrowRight className="size-4" />
-          </Link>
         </div>
 
-        <h3 className="mt-auto pt-6 text-[clamp(1.75rem,2.5vw,2.6rem)] leading-tight text-white transition-colors duration-500 group-hover:text-navy group-has-[a:focus-visible]:text-navy group-data-[open=true]:text-navy">
+        <h3 className="shrink-0 pt-4 text-[clamp(1.5rem,2.5vw,2.6rem)] leading-tight sm:pt-6 text-white transition-colors duration-500 group-hover:text-navy group-data-[open=true]:text-navy">
           {c.name}
         </h3>
       </div>
 
-      {/* Mouse/keyboard: the whole card is a link. Touch: the card toggles its panel. */}
-      <Link href={`/${c.slug}`} aria-label={c.name} className="absolute inset-0 z-[2] outline-none pointer-coarse:hidden" />
       <button
         type="button"
         aria-expanded={open}
         aria-label={`${open ? "Hide" : "Show"} ${c.name} details`}
         onClick={onToggle}
-        className="absolute inset-0 z-[2] hidden pointer-coarse:block"
+        className="absolute inset-0 z-[2] cursor-pointer focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-kooo-green"
       />
     </article>
   );
@@ -295,12 +296,7 @@ export function SolutionsGrid() {
   return (
     <section ref={ref} aria-labelledby="home-solutions-title" className="relative z-10 bg-cloud px-6 py-12 md:px-8 md:py-16">
       <div className="mb-6 flex justify-end">
-        <Link
-          href="/insurancesolutions"
-          className="group border-b border-navy pb-1 font-button text-lg text-navy"
-        >
-          <RollText text="All solutions" />
-        </Link>
+        <p className="font-button text-sm text-navy/75">Insurance pages coming soon</p>
       </div>
       {/* Below 1024px the stage bleeds to the screen edges so gallery cards slide off-screen;
           the margin sits on this wrapper because ScrollTrigger moves margins off a pinned element. */}

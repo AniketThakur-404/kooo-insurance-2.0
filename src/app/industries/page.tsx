@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { industries, industryHref } from "@/content/catalogue";
 import { PageTitle } from "@/components/sections/page-title";
-import { ListRows } from "@/components/sections/list-rows";
 import { CtaBand } from "@/components/sections/cta-band";
 import { ImageBand } from "@/components/sections/image-band";
 import { Breadcrumbs } from "@/components/detail/breadcrumbs";
 import { JsonLd, breadcrumbLd } from "@/components/detail/json-ld";
+import { PhotoCardGrid } from "@/components/detail/detail-sections";
+import { ScrollMarquee } from "@/components/motion/scroll-marquee";
 
 export const metadata: Metadata = {
   title: "Industries We Support",
@@ -24,10 +25,13 @@ export default function IndustriesPage() {
       <PageTitle
         words={["Industries", "We Support"]}
         intro="Every industry has its own activities and risks. Find your industry to see the risks businesses commonly face and the insurance options they consider."
+        image="/images/photos/pexels-4981810.jpg"
+        tags={[`${industries.length} industries`, "Australia-wide"]}
       />
-      <section className="relative z-10 px-6 pb-28 md:px-8 md:pb-36">
-        <ListRows items={industries.map((i) => ({ title: i.name, description: i.summary, href: industryHref(i.slug) }))} />
+      <section className="relative z-10 px-2 py-24 sm:px-3 md:px-4 md:py-32">
+        <PhotoCardGrid cards={industries.map((i) => ({ title: i.name, text: i.summary, href: industryHref(i.slug), image: i.image }))} />
       </section>
+      <ScrollMarquee items={industries.map((i) => i.name)} />
       <ImageBand
         image="/images/photos/pexels-2290753.jpg"
         title="Can’t see your industry?"

@@ -26,7 +26,12 @@ const details = [
 export default function ContactPage() {
   return (
     <>
-      <PageTitle words={["Let’s", "Talk"]} intro={`${contactPage.title} ${contactPage.subtitle}`} />
+      <PageTitle
+        words={["Let’s", "Talk"]}
+        intro={`${contactPage.title} ${contactPage.subtitle}`}
+        image="/images/photos/pexels-1451040.jpg"
+        tags={["Business and personal", "Australia-wide"]}
+      />
 
       <section className="relative z-10 px-6 pb-28 md:px-8">
         <div className="grid gap-12 border-t border-navy/20 pt-12 lg:grid-cols-2">
