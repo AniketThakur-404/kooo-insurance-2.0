@@ -10,6 +10,8 @@ type PageTitleProps = {
   /** Two halves: the first ends up on the left edge, the second on the right. */
   words: [string, string];
   intro?: string;
+  /** Full heading text for search engines and screen readers, when it differs from the two halves. */
+  heading?: string;
 };
 
 // Font size steps down for longer titles so both halves always fit one line on desktop.
@@ -24,7 +26,7 @@ function sizeFor(length: number) {
  * Inner-page title, as on the reference contact/team pages: the words decode
  * from dots side by side in the centre, then slide apart to the screen edges.
  */
-export function PageTitle({ words, intro }: PageTitleProps) {
+export function PageTitle({ words, intro, heading }: PageTitleProps) {
   const ref = useRef<HTMLElement>(null);
   const ready = useUi((s) => s.ready);
 
@@ -76,7 +78,7 @@ export function PageTitle({ words, intro }: PageTitleProps) {
   return (
     <section ref={ref} className="relative flex min-h-[80svh] flex-col justify-between gap-16 px-6 pb-12 pt-36 md:px-8 md:pt-40">
       <h1 className={cn("flex flex-col font-heading leading-[0.98] text-navy md:flex-row md:justify-between", sizeFor(words.join(" ").length))}>
-        <span className="sr-only">{words.join(" ")}</span>
+        <span className="sr-only">{heading ?? words.join(" ")}</span>
         <span aria-hidden className="contents">
           {part(0)}
           {part(1, "self-end md:self-auto")}

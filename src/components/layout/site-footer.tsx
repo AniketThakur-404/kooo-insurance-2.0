@@ -112,6 +112,14 @@ export function SiteFooter() {
                   <a href={`mailto:${contact.email}`} className="block break-all text-kooo-mint hover:underline">
                     {contact.email}
                   </a>
+                  <p className="mt-3 text-white/70">Claims</p>
+                  <a href={`mailto:${contact.claimsEmail}`} className="block break-all text-kooo-mint hover:underline">
+                    {contact.claimsEmail}
+                  </a>
+                  <p className="mt-3 text-white/70">Referral partners</p>
+                  <a href={`mailto:${contact.partnersEmail}`} className="block break-all text-kooo-mint hover:underline">
+                    {contact.partnersEmail}
+                  </a>
                 </div>
                 <div>
                   <p className="mb-1 text-white/70">Visit us</p>

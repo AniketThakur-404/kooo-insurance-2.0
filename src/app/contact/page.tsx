@@ -15,7 +15,9 @@ export const metadata: Metadata = {
 
 const details = [
   { label: "Phone", value: contact.phone, href: contact.phoneHref },
-  { label: "Email", value: contact.email, href: `mailto:${contact.email}` },
+  { label: "General enquiries", value: contact.email, href: `mailto:${contact.email}` },
+  { label: "Claims", value: contact.claimsEmail, href: `mailto:${contact.claimsEmail}` },
+  { label: "Referral partners", value: contact.partnersEmail, href: `mailto:${contact.partnersEmail}` },
   { label: "Address", value: contact.address },
   { label: "Facebook", value: "Kooo Insurance", href: contact.facebook },
   { label: "Instagram", value: "@koooinsurance", href: contact.instagram },
@@ -50,7 +52,7 @@ export default function ContactPage() {
               {details.map((d) => (
                 <div
                   key={d.label}
-                  className="grid grid-cols-[6.5rem_1fr] gap-4 border-b border-navy/15 px-3 py-3.5 text-base transition-colors duration-300 hover:bg-navy hover:text-white md:text-lg [&:hover_a]:text-kooo-mint"
+                  className="grid grid-cols-[8.5rem_1fr] gap-4 border-b border-navy/15 px-3 py-3.5 text-base transition-colors duration-300 hover:bg-navy hover:text-white md:text-lg [&:hover_a]:text-kooo-mint"
                 >
                   <dt className="font-medium">{d.label}</dt>
                   <dd className="text-right">

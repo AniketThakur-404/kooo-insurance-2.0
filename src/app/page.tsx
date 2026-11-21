@@ -16,7 +16,7 @@ const questions: FaqItem[] = [
   { category: "Getting started", question: "Can I work with Kooo outside Sydney?", answer: "Yes. Our team is based in Bella Vista and works with businesses and families across Australia." },
   { category: "Getting started", question: "Can I ask about both business and personal cover?", answer: "Yes. Tell us about your business, home or vehicles when you get in touch so we can discuss the cover you need." },
   { category: "Getting started", question: "What if I don’t know which category to choose?", answer: "Select Other on the contact form and describe what you want to insure. Our team will help you find a starting point.", links: [{ label: "Open the contact form", href: "/contact" }] },
-  { category: "Claims", question: "How do I make a claim?", answer: "Have your policy number and a short description of what happened ready. Contact Kooo to discuss the next step, and check your policy documents for your insurer’s claims contact details.", links: [{ label: `Call ${contact.phone}`, href: contact.phoneHref }] },
+  { category: "Claims", question: "How do I make a claim?", answer: "Have your policy number and a short description of what happened ready. Contact Kooo to discuss the next step, and check your policy documents for your insurer’s claims contact details.", links: [{ label: `Call ${contact.phone}`, href: contact.phoneHref }, { label: contact.claimsEmail, href: `mailto:${contact.claimsEmail}` }] },
   {
     category: "Contact & documents",
     question: "How can I get in touch with Kooo?",

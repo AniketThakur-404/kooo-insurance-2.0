@@ -1,9 +1,12 @@
 // All copy, contact details and asset paths, taken from koooinsurance.com.au.
 
 export const contact = {
-  phone: "02 4093 0636",
+  phone: "(02) 4093 0636",
   phoneHref: "tel:0240930636",
+  /** General enquiries. */
   email: "protect@koooinsurance.com.au",
+  claimsEmail: "care@koooinsurance.com.au",
+  partnersEmail: "partners@koooinsurance.com.au",
   address: "7-9 Irvine Place, BELLA VISTA 2153",
   facebook: "https://www.facebook.com/profile.php?id=61576387637561",
   instagram: "https://www.instagram.com/koooinsurance/",

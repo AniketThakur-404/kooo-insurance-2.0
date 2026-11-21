@@ -10,9 +10,10 @@ import { RollText } from "@/components/motion/roll-text";
 import { cn } from "@/lib/utils";
 
 const menuLinks = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Insurance Solutions", href: "/insurancesolutions" },
+  { label: "Insurance", href: "/insurancesolutions" },
+  { label: "Industries", href: "/industryinsurance" },
+  { label: "Claims", href: "/claims" },
+  { label: "About Kooo", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -126,7 +127,7 @@ export function SiteHeader() {
                     href={link.href}
                     data-menu-link
                     onClick={() => setMenuOpen(false)}
-                    className="group block w-fit font-heading text-[clamp(2rem,8.4vw,5.5rem)] leading-[1.1] text-kooo-mint"
+                    className="group block w-fit font-heading text-[clamp(1.75rem,5.5vw,3.75rem)] leading-[1.1] text-kooo-mint"
                   >
                     <RollText text={link.label} stagger={14} />
                   </Link>
